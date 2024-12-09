@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth';
+import vocabularyRoutes from './routes/vocabulary';
 
 dotenv.config();
 
@@ -14,6 +15,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // Auth routes
 app.use('/api/auth', authRoutes);
+
+// Vocabulary routes
+app.use('/api/vocabulary', vocabularyRoutes);
 
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
     console.error(err);
