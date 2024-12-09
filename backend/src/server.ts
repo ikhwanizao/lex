@@ -23,7 +23,6 @@ app.use((err: Error, req: express.Request, res: express.Response, next: express.
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
-    console.log('JWT_SECRET present:', !!process.env.JWT_SECRET);
 });
 
 export default app;
