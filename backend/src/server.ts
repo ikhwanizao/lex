@@ -8,15 +8,9 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Middleware
 app.use(cors());
-app.use(express.json()); // Add this for parsing JSON requests
-app.use(express.urlencoded({ extended: true })); // Keep this for form data
-
-// Basic test route
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok' });
-});
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Auth routes
 app.use('/api/auth', authRoutes);
