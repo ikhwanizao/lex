@@ -1,32 +1,32 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import authRoutes from './routes/auth';
-import vocabularyRoutes from './routes/vocabulary';
+import express from 'express'
+import dotenv from 'dotenv'
+import cors from 'cors'
+import { getAdminAdapter } from './config/database.config.ts'
+import { initAdmin } from './config/admin.config.ts'
+import authRoutes from './routes/auth.route.ts'
+import vocabularyRoutes from './routes/vocabulary.route.ts'
 
-dotenv.config();
+dotenv.config()
 
-const app = express();
-const port = process.env.PORT || 5000;
+const start = async () => {
+    const app = express()
 
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+    const db = await getAdminAdapter()
+    const { admin, router } = initAdmin(db)
 
-// Auth routes
-app.use('/api/auth', authRoutes);
+    app.use(admin.options.rootPath, router)
+    app.use(cors())
+    app.use(express.json())
+    app.use(express.urlencoded({ extended: true }))
 
-// Vocabulary routes
-app.use('/api/vocabulary', vocabularyRoutes);
+    app.use('/api/auth', authRoutes)
+    app.use('/api/vocabulary', vocabularyRoutes)
 
-app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
-    console.error(err);
-    res.status(500).json({ error: 'Internal server error' });
-});
+    const PORT = process.env.PORT || 5000
+    app.listen(PORT, () => {
+        console.log(`Server started on http://localhost:${PORT}`)
+        console.log(`AdminJS started on http://localhost:${PORT}${admin.options.rootPath}`)
+    })
+}
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
-
-export default app;
+start()

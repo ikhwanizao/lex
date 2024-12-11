@@ -1,56 +1,48 @@
-import { Request, Response, NextFunction } from 'express';
+import { RequestHandler } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { query } from '../config/database';
+import { query } from '../config/database.config.ts';
+import { DbUser } from '../types/database.types.ts';
 
-type RequestHandler = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => Promise<void>;
-
-export const register: RequestHandler = async (req, res, next) => {
+export const register: RequestHandler = async (req, res, next): Promise<void> => {
   try {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      res.status(400).json({ error: 'Email and password are required' });
-      return;
-    }
+    const { email, password, username } = req.body;
 
-    const existingUser = await query('SELECT * FROM users WHERE email = $1', [email]);
-    if (existingUser.rows.length > 0) {
-      res.status(400).json({ error: 'Email already registered' });
+    if (!email || !password || !username) {
+      res.status(400).json({ error: 'Email, password and username are required' });
       return;
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const result = await query(
-      'INSERT INTO users (email, password_hash) VALUES ($1, $2) RETURNING id, email',
-      [email, hashedPassword]
+    const result = await query<DbUser>(
+      'INSERT INTO users (email, password_hash, username) VALUES ($1, $2, $3) RETURNING *',
+      [email, hashedPassword, username]
     );
 
-    const token = jwt.sign(
-      { id: result.rows[0].id, email: result.rows[0].email },
-      process.env.JWT_SECRET!
-    );
+    const user = result.rows[0];
+    const userForToken = {
+      id: user.id,
+      email: user.email
+    };
+
+    const token = jwt.sign(userForToken, process.env.JWT_SECRET!);
 
     res.status(201).json({ token });
-  } catch (error: any) {
-    if (error.code === '23505') {
-      res.status(400).json({ error: 'Email already registered' });
-    } else {
-      console.error('Register error:', error);
-      next(error);
-    }
+  } catch (error) {
+    next(error);
   }
 };
 
-export const login: RequestHandler = async (req, res, next) => {
+export const login: RequestHandler = async (req, res, next): Promise<void> => {
   try {
     const { email, password } = req.body;
 
-    const result = await query('SELECT * FROM users WHERE email = $1', [email]);
+    const result = await query<DbUser>(
+      'SELECT * FROM users WHERE email = $1',
+      [email]
+    );
+
     const user = result.rows[0];
 
     if (!user || !await bcrypt.compare(password, user.password_hash)) {
@@ -58,10 +50,12 @@ export const login: RequestHandler = async (req, res, next) => {
       return;
     }
 
-    const token = jwt.sign(
-      { id: user.id, email: user.email },
-      process.env.JWT_SECRET!
-    );
+    const userForToken = {
+      id: user.id,
+      email: user.email
+    };
+
+    const token = jwt.sign(userForToken, process.env.JWT_SECRET!);
 
     res.json({ token });
   } catch (error) {

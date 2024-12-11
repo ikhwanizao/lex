@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { query } from '../config/database';
+import { query } from '../config/database.config.ts';
 
 type RequestHandler = (
     req: Request,
@@ -23,7 +23,6 @@ export const addWord: RequestHandler = async (req, res, next) => {
     try {
         const { word, definition, user_example, ai_example } = req.body;
         
-        // Validate required fields
         if (!word || !definition) {
             res.status(400).json({ error: 'Word and definition are required' });
             return;
@@ -44,7 +43,6 @@ export const updateWord: RequestHandler = async (req, res, next) => {
         const { id } = req.params;
         const { word, definition, user_example, ai_example } = req.body;
         
-        // Validate required fields
         if (!word || !definition) {
             res.status(400).json({ error: 'Word and definition are required' });
             return;
