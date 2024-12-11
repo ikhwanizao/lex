@@ -4,6 +4,7 @@ import { Database, Resource } from '@adminjs/sql';
 import Connect from 'connect-pg-simple';
 import session from 'express-session';
 import dotenv from 'dotenv';
+import bcrypt from 'bcrypt';
 
 dotenv.config();
 
@@ -29,9 +30,47 @@ export const initAdmin = (db: any) => {
                 options: {
                     properties: {
                         created_at: { isVisible: false },
-                        updated_at: { isVisible: false }
+                        updated_at: { isVisible: false },
+                        password_hash: { 
+                            isVisible: false 
+                        },
+                        password: {
+                            type: 'password',
+                            isVisible: {
+                                list: false,
+                                edit: true,
+                                filter: false,
+                                show: false,
+                            },
+                        }
                     },
                     actions: {
+                        new: {
+                            before: async (request: any) => {
+                                if (request.payload.password) {
+                                    request.payload = {
+                                        ...request.payload,
+                                        password_hash: await bcrypt.hash(request.payload.password, 10),
+                                    };
+                                    delete request.payload.password;
+                                }
+                                return request;
+                            },
+                        },
+                        edit: {
+                            before: async (request: any) => {
+                                if (request.payload.password) {
+                                    request.payload = {
+                                        ...request.payload,
+                                        password_hash: await bcrypt.hash(request.payload.password, 10),
+                                    };
+                                    delete request.payload.password;
+                                } else {
+                                    delete request.payload.password;
+                                }
+                                return request;
+                            },
+                        },
                         delete: {
                             before: async (request: any) => {
                                 console.log('Attempting to delete user:', request.params.recordId);
