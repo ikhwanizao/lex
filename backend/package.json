@@ -2,31 +2,45 @@
   "name": "backend",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
+  "license": "MIT",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "build": "tsc",
-    "start": "node dist/server.js"
+    "dev": "yarn tsx watch src/server.ts",
+    "build": "yarn tsc",
+    "start": "yarn node dist/server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
+    "@adminjs/express": "^6.1.1",
+    "@adminjs/sql": "^2.2.6",
     "@types/express": "^5.0.0",
-    "@types/node": "^22.10.1",
+    "adminjs": "^7.8.13",
     "bcrypt": "^5.1.1",
+    "connect-pg-simple": "^10.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "express-formidable": "^1.2.0",
+    "express-session": "^1.18.1",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.13.1",
     "ts-node-dev": "^2.0.0",
+    "tslib": "^2.8.1",
+    "typeorm": "^0.3.20",
     "typescript": "^5.7.2"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
+    "@types/connect-pg-simple": "^7.0.3",
     "@types/cors": "^2.8.17",
+    "@types/express-session": "^1.18.1",
     "@types/jsonwebtoken": "^9.0.7",
-    "@types/pg": "^8.11.10"
+    "@types/linkify-it": "^5.0.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.10.1",
+    "@types/pg": "^8.11.10",
+    "@types/react": "^18.3.16",
+    "cross-env": "^7.0.3",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.19.2"
   }
 }
