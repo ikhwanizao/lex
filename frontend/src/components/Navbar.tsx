@@ -1,8 +1,15 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 
 export default function Navbar() {
-    const { logout } = useAuth();
+    const { logout, user } = useAuth();
+
+    useEffect(() => {
+        // if (user) {
+        //     console.log('Username:', user.username);
+        // }
+    }, [user]);
 
     return (
         <nav className="bg-gray-800 border-b border-gray-700">
@@ -13,7 +20,12 @@ export default function Navbar() {
                             Lex
                         </Link>
                     </div>
-                    <div className="flex items-center">
+                    <div className="flex items-center space-x-4">
+                        {user && (
+                            <span className="text-gray-300">
+                                {user.username}
+                            </span>
+                        )}
                         <button
                             onClick={logout}
                             className="text-gray-300 hover:text-white transition-colors px-4 py-2 rounded-md hover:bg-gray-700"

@@ -5,9 +5,9 @@ import useAuth from '../hooks/useAuth';
 import { AxiosError } from 'axios'; 
 import { ErrorResponse } from '../types/common';
 
-
 export default function Register() {
     const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
@@ -21,7 +21,7 @@ export default function Register() {
             return;
         }
         try {
-            const { token } = await auth.register(email, password);
+            const { token } = await auth.register(email, username, password,);
             login(token);
             navigate('/dashboard');
         } catch (err) {
@@ -62,6 +62,20 @@ export default function Register() {
                                 required
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
+                                className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm text-white placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            />
+                        </div>
+                        {/* Username input */}
+                        <div>
+                            <label htmlFor="username" className="block text-sm font-medium text-gray-300">
+                                Username
+                            </label>
+                            <input
+                                id="username"
+                                type="text"
+                                required
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
                                 className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm text-white placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                             />
                         </div>

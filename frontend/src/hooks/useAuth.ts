@@ -12,7 +12,9 @@ interface AuthState {
 
 const useAuth = create<AuthState>((set) => ({
     token: localStorage.getItem('token'),
-    user: null,
+    user: localStorage.getItem('token') 
+        ? jwtDecode<User>(localStorage.getItem('token')!) 
+        : null,
     isAuthenticated: !!localStorage.getItem('token'),
     login: (token) => {
         localStorage.setItem('token', token);
