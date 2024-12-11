@@ -52,7 +52,8 @@ export const login: RequestHandler = async (req, res, next): Promise<void> => {
 
     const userForToken = {
       id: user.id,
-      email: user.email
+      email: user.email,
+      username: user.username
     };
 
     const token = jwt.sign(userForToken, process.env.JWT_SECRET!);
