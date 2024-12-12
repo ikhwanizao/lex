@@ -7,6 +7,26 @@ module.exports = {
   darkMode: ["class"],
   theme: {
     extend: {
+      animation: {
+        'shimmer': 'shimmer 2s infinite linear',
+        'shimmer-fast': 'shimmer 1s infinite linear',
+        'gradient-x': 'gradient-x 15s ease infinite',
+      },
+      keyframes: {
+        shimmer: {
+          '100%': { transform: 'translateX(150%)' },
+        },
+        'gradient-x': {
+          '0%, 100%': {
+            'background-size': '200% 200%',
+            'background-position': 'left center'
+          },
+          '50%': {
+            'background-size': '200% 200%',
+            'background-position': 'right center'
+          },
+        },
+      },
       colors: {
         border: "hsl(var(--border))",
         background: "hsl(var(--background))",
