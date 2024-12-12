@@ -1,10 +1,10 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
-import Layout from './components/Layout';
-import ProtectedRoute from './components/ProtectedRoute';
+import Login from './pages/Login.page';
+import Register from './pages/Register.page';
+import Dashboard from './pages/Dashboard.page';
+import Layout from './components/Layout.component';
+import ProtectedRoute from './components/ProtectedRoute.component';
 
 const queryClient = new QueryClient();
 

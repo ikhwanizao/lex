@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { AuthResponse } from '../types/auth';
-import { VocabularyWord, CreateWordData, UpdateWordData } from '../types/vocabulary';
+import { AuthResponse } from '../types/auth.type';
+import { VocabularyWord, CreateWordData, UpdateWordData } from '../types/vocabulary.type';
 
 const api = axios.create({
     baseURL: 'http://localhost:5000/api'
@@ -40,6 +40,13 @@ export const vocabulary = {
     },
     deleteWord: async (id: number) => {
         const response = await api.delete(`/vocabulary/${id}`);
+        return response.data;
+    },
+    generateAiExample: async (id: number, word: string, definition: string) => {
+        const response = await api.post<{ aiExample: string }>(
+            `/vocabulary/${id}/generate-example`, 
+            { word, definition }
+        );
         return response.data;
     }
 };

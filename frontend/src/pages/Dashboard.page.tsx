@@ -1,8 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { vocabulary } from '../services/api';
-import { VocabularyWord, CreateWordData } from '../types/vocabulary';
+import { vocabulary } from '../services/api.service';
+import { VocabularyWord, CreateWordData, UpdateWordData } from '../types/vocabulary.type';
 import { useState } from 'react';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '../components/ui/alert-dialog';
+import VocabularyCard from '../components/VocabularyCard.component';
+// import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '../components/ui/alert-dialog.ui';
 
 export default function Dashboard() {
     const [isAddingWord, setIsAddingWord] = useState(false);
@@ -30,13 +31,36 @@ export default function Dashboard() {
     });
 
     const updateWordMutation = useMutation({
-        mutationFn: ({ id, data }: { id: number; data: CreateWordData }) => 
+        mutationFn: ({ id, data }: { id: number; data: UpdateWordData }) => 
             vocabulary.updateWord(id, data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['vocabulary'] });
-            setEditingWord(null);
         },
     });
+
+    const handleWordUpdate = (updatedWord: VocabularyWord) => {
+        // Convert VocabularyWord to UpdateWordData
+        const updateData: UpdateWordData = {
+            word: updatedWord.word,
+            definition: updatedWord.definition,
+            user_example: updatedWord.user_example,
+            ai_example: updatedWord.ai_example
+        };
+
+        // Update the word in the cache immediately
+        queryClient.setQueryData(['vocabulary'], (oldData: VocabularyWord[] | undefined) => {
+            if (!oldData) return [updatedWord];
+            return oldData.map(word => 
+                word.id === updatedWord.id ? updatedWord : word
+            );
+        });
+
+        // Also send to the server
+        updateWordMutation.mutate({ 
+            id: updatedWord.id, 
+            data: updateData 
+        });
+    };
     
     const deleteWordMutation = useMutation({
         mutationFn: vocabulary.deleteWord,
@@ -83,6 +107,7 @@ export default function Dashboard() {
                     </button>
                 </div>
 
+                {/* Add Word Form */}
                 {isAddingWord && (
                     <form onSubmit={handleAddWord} className="mb-8 p-4 bg-gray-800 rounded-lg shadow-lg border border-gray-700">
                         <div className="space-y-4">
@@ -132,6 +157,7 @@ export default function Dashboard() {
                     </form>
                 )}
 
+                {/* Word List */}
                 <div className="grid gap-4">
                     {words?.map((word) => (
                         <div key={word.id} className="bg-gray-800 p-4 rounded-lg shadow-lg border border-gray-700">
@@ -190,53 +216,12 @@ export default function Dashboard() {
                                     </div>
                                 </form>
                             ) : (
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <h3 className="text-lg font-semibold text-white">{word.word}</h3>
-                                        <p className="text-gray-300 mt-1">{word.definition}</p>
-                                        {word.user_example && (
-                                            <p className="text-gray-400 mt-2 italic">"{word.user_example}"</p>
-                                        )}
-                                    </div>
-                                    <div className="flex space-x-2">
-                                        <button
-                                            onClick={() => setEditingWord(word)}
-                                            className="text-blue-400 hover:text-blue-300 transition-colors"
-                                        >
-                                            Edit
-                                        </button>
-                                        <AlertDialog>
-                                            <AlertDialogTrigger asChild>
-                                                <button
-                                                    className="text-red-400 hover:text-red-300 transition-colors"
-                                                >
-                                                    Delete
-                                                </button>
-                                            </AlertDialogTrigger>
-                                            <AlertDialogContent className="bg-gray-800 border border-gray-700">
-                                                <AlertDialogHeader>
-                                                    <AlertDialogTitle className="text-white">Delete Word</AlertDialogTitle>
-                                                    <AlertDialogDescription className="text-gray-300">
-                                                        Are you sure you want to delete "{word.word}"? This action cannot be undone.
-                                                    </AlertDialogDescription>
-                                                </AlertDialogHeader>
-                                                <AlertDialogFooter>
-                                                    <AlertDialogCancel 
-                                                        className="bg-gray-700 text-white hover:bg-gray-600 border-gray-600"
-                                                    >
-                                                        Cancel
-                                                    </AlertDialogCancel>
-                                                    <AlertDialogAction
-                                                        className="bg-red-600 text-white hover:bg-red-700"
-                                                        onClick={() => handleDelete(word)}
-                                                    >
-                                                        Delete
-                                                    </AlertDialogAction>
-                                                </AlertDialogFooter>
-                                            </AlertDialogContent>
-                                        </AlertDialog>
-                                    </div>
-                                </div>
+                                <VocabularyCard
+                                    word={word}
+                                    onEdit={setEditingWord}
+                                    onDelete={handleDelete}
+                                    onUpdate={handleWordUpdate}  // Add this prop
+                                />
                             )}
                         </div>
                     ))}
