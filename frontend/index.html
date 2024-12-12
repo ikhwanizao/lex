@@ -1,57 +1,55 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta name="description" content="Lex - Your personal vocabulary learning assistant. Build your vocabulary with AI-powered examples and personalized practice." />
-    <meta name="theme-color" content="#1a1b1e" />
-    
-    <!-- Open Graph / Social Media Meta Tags -->
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="Lex - Vocabulary Learning Assistant" />
-    <meta property="og:description" content="Build your vocabulary with AI-powered examples and personalized practice." />
-    <meta property="og:image" content="/og-image.png" />
-    
-    <!-- iOS specific meta tags -->
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="Lex" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    
-    <!-- Preload fonts -->
-    <link 
-      rel="preload" 
-      href="/fonts/inter-var.woff2" 
-      as="font" 
-      type="font/woff2" 
-      crossorigin="anonymous"
-    />
-    
-    <!-- PWA manifest -->
-    <link rel="manifest" href="/manifest.json" />
-    
-    <!-- Primary Meta Tags -->
-    <title>Lex - Vocabulary Learning Assistant</title>
-    
-    <!-- Prevent flash of unstyled content -->
-    <script>
-      // Check for saved theme preference
-      let theme = localStorage.getItem('theme') || 'dark';
-      document.documentElement.className = theme;
-    </script>
-  </head>
-  <body>
-    <div id="root"></div>
-    
-    <!-- No-JS fallback -->
-    <noscript>
-      <div style="padding: 2rem; text-align: center;">
-        <h1>JavaScript Required</h1>
-        <p>Please enable JavaScript to use Lex - Your vocabulary learning assistant.</p>
-      </div>
-    </noscript>
-    
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description"
+    content="Lex - Your personal vocabulary learning assistant. Build your vocabulary with AI-powered examples and personalized practice." />
+  <meta name="theme-color" content="#1a1b1e" />
+
+  <!-- Open Graph / Social Media Meta Tags -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Lex - Vocabulary Learning Assistant" />
+  <meta property="og:description" content="Build your vocabulary with AI-powered examples and personalized practice." />
+  <meta property="og:image" content="/og-image.png" />
+
+  <!-- iOS specific meta tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Lex" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <!-- Preload fonts -->
+  <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+
+  <!-- PWA manifest -->
+  <link rel="manifest" href="/manifest.json" />
+
+  <!-- Primary Meta Tags -->
+  <title>Lex - Vocabulary Learning Assistant</title>
+
+  <!-- Prevent flash of unstyled content -->
+  <script>
+    // Check for saved theme preference
+    // let theme = localStorage.getItem('theme') || 'dark';
+    // document.documentElement.className = theme;
+  </script>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <!-- No-JS fallback -->
+  <noscript>
+    <div style="padding: 2rem; text-align: center;">
+      <h1>JavaScript Required</h1>
+      <p>Please enable JavaScript to use Lex - Your vocabulary learning assistant.</p>
+    </div>
+  </noscript>
+
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
 </html>
