@@ -49,9 +49,16 @@ export const updateWord: RequestHandler = async (req, res, next) => {
             return;
         }
 
+        const existingWord = await query(
+            'SELECT ai_example FROM vocabulary WHERE id = $1 AND user_id = $2',
+            [id, req.user?.id]
+        );
+
+        const finalAiExample = ai_example !== undefined ? ai_example : existingWord.rows[0]?.ai_example;
+
         const result = await query(
             'UPDATE vocabulary SET word = $1, definition = $2, user_example = $3, ai_example = $4, updated_at = CURRENT_TIMESTAMP WHERE id = $5 AND user_id = $6 RETURNING *',
-            [word, definition, user_example, ai_example, id, req.user?.id]
+            [word, definition, user_example, finalAiExample, id, req.user?.id]
         );
 
         if (result.rows.length === 0) {
