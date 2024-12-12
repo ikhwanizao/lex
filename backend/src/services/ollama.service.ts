@@ -27,7 +27,7 @@ export class OllamaService {
         try {
             // console.log('Sending request to Ollama...');
             const response = await axios.post<OllamaResponse>(`${OLLAMA_API}/generate`, {
-                model: "llama3.2",
+                model: "llama3.2:1b",
                 prompt: `Given the word "${word}" which means "${definition}", generate one natural example sentence using this word. The sentence should demonstrate proper usage and help understand the meaning. Provide only the example sentence, nothing else.`,
                 stream: false
             });
