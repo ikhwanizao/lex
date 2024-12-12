@@ -3,6 +3,7 @@ import { vocabulary } from '../services/api.service';
 import { VocabularyWord, CreateWordData, UpdateWordData } from '../types/vocabulary.type';
 import { useState } from 'react';
 import VocabularyCard from '../components/VocabularyCard.component';
+import LoadingSpinner from '../components/LoadingSpinner.component';
 import { 
     AlertDialog,
     AlertDialogAction,
@@ -101,6 +102,7 @@ export default function Dashboard() {
                     word: editingWord.word,
                     definition: editingWord.definition,
                     user_example: editingWord.user_example || '',
+                    ai_example: editingWord.ai_example 
                 }
             });
         }
@@ -131,7 +133,7 @@ export default function Dashboard() {
         }
     };
 
-    if (isLoading) return <div className="text-white">Loading...</div>;
+    if (isLoading) return <LoadingSpinner />;
 
     return (
         <div className="min-h-screen bg-gray-900">
