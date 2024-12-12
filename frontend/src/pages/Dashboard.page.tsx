@@ -3,11 +3,23 @@ import { vocabulary } from '../services/api.service';
 import { VocabularyWord, CreateWordData, UpdateWordData } from '../types/vocabulary.type';
 import { useState } from 'react';
 import VocabularyCard from '../components/VocabularyCard.component';
-// import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '../components/ui/alert-dialog.ui';
+import { 
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '../components/ui/alert-dialog.ui';
 
 export default function Dashboard() {
     const [isAddingWord, setIsAddingWord] = useState(false);
     const [editingWord, setEditingWord] = useState<VocabularyWord | null>(null);
+    const [wordToDelete, setWordToDelete] = useState<VocabularyWord | null>(null);
+    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+    const [showDiscardDialog, setShowDiscardDialog] = useState(false);
     const [newWord, setNewWord] = useState<CreateWordData>({
         word: '',
         definition: '',
@@ -35,11 +47,12 @@ export default function Dashboard() {
             vocabulary.updateWord(id, data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['vocabulary'] });
+            setEditingWord(null);
+            setHasUnsavedChanges(false);
         },
     });
 
     const handleWordUpdate = (updatedWord: VocabularyWord) => {
-        // Convert VocabularyWord to UpdateWordData
         const updateData: UpdateWordData = {
             word: updatedWord.word,
             definition: updatedWord.definition,
@@ -47,7 +60,6 @@ export default function Dashboard() {
             ai_example: updatedWord.ai_example
         };
 
-        // Update the word in the cache immediately
         queryClient.setQueryData(['vocabulary'], (oldData: VocabularyWord[] | undefined) => {
             if (!oldData) return [updatedWord];
             return oldData.map(word => 
@@ -55,7 +67,6 @@ export default function Dashboard() {
             );
         });
 
-        // Also send to the server
         updateWordMutation.mutate({ 
             id: updatedWord.id, 
             data: updateData 
@@ -66,17 +77,24 @@ export default function Dashboard() {
         mutationFn: vocabulary.deleteWord,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['vocabulary'] });
+            setWordToDelete(null);
         },
     });
 
     const handleAddWord = (e: React.FormEvent) => {
         e.preventDefault();
+        if (!newWord.word.trim() || !newWord.definition.trim()) {
+            return;
+        }
         addWordMutation.mutate(newWord);
     };
 
     const handleEditWord = (e: React.FormEvent) => {
         e.preventDefault();
         if (editingWord) {
+            if (!editingWord.word.trim() || !editingWord.definition.trim()) {
+                return;
+            }
             updateWordMutation.mutate({
                 id: editingWord.id,
                 data: {
@@ -88,8 +106,29 @@ export default function Dashboard() {
         }
     };
 
+    const handleCancelEdit = () => {
+        if (hasUnsavedChanges) {
+            setShowDiscardDialog(true);
+        } else {
+            setEditingWord(null);
+        }
+    };
+
+    const handleInputChange = (field: keyof VocabularyWord, value: string) => {
+        if (editingWord) {
+            setEditingWord({ ...editingWord, [field]: value });
+            setHasUnsavedChanges(true);
+        }
+    };
+
     const handleDelete = (word: VocabularyWord) => {
-        deleteWordMutation.mutate(word.id);
+        setWordToDelete(word);
+    };
+
+    const confirmDelete = () => {
+        if (wordToDelete) {
+            deleteWordMutation.mutate(wordToDelete.id);
+        }
     };
 
     if (isLoading) return <div className="text-white">Loading...</div>;
@@ -106,6 +145,52 @@ export default function Dashboard() {
                         Add Word
                     </button>
                 </div>
+
+                {/* Delete Confirmation Dialog */}
+                <AlertDialog open={!!wordToDelete} onOpenChange={() => setWordToDelete(null)}>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Word</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                Are you sure you want to delete "{wordToDelete?.word}"? This action cannot be undone.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                                onClick={confirmDelete}
+                                className="bg-red-600 hover:bg-red-700"
+                            >
+                                Delete
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+
+                {/* Discard Changes Dialog */}
+                <AlertDialog open={showDiscardDialog} onOpenChange={setShowDiscardDialog}>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Discard Changes</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                You have unsaved changes. Are you sure you want to discard them?
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>Keep Editing</AlertDialogCancel>
+                            <AlertDialogAction
+                                onClick={() => {
+                                    setEditingWord(null);
+                                    setHasUnsavedChanges(false);
+                                    setShowDiscardDialog(false);
+                                }}
+                                className="bg-red-600 hover:bg-red-700"
+                            >
+                                Discard Changes
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
 
                 {/* Add Word Form */}
                 {isAddingWord && (
@@ -168,10 +253,7 @@ export default function Dashboard() {
                                         <input
                                             type="text"
                                             value={editingWord.word}
-                                            onChange={(e) => setEditingWord({
-                                                ...editingWord,
-                                                word: e.target.value
-                                            })}
+                                            onChange={(e) => handleInputChange('word', e.target.value)}
                                             className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"
                                             required
                                         />
@@ -180,10 +262,7 @@ export default function Dashboard() {
                                         <label className="block text-sm font-medium text-gray-300">Definition</label>
                                         <textarea
                                             value={editingWord.definition}
-                                            onChange={(e) => setEditingWord({
-                                                ...editingWord,
-                                                definition: e.target.value
-                                            })}
+                                            onChange={(e) => handleInputChange('definition', e.target.value)}
                                             className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"
                                             required
                                         />
@@ -192,17 +271,14 @@ export default function Dashboard() {
                                         <label className="block text-sm font-medium text-gray-300">Example</label>
                                         <textarea
                                             value={editingWord.user_example || ''}
-                                            onChange={(e) => setEditingWord({
-                                                ...editingWord,
-                                                user_example: e.target.value
-                                            })}
+                                            onChange={(e) => handleInputChange('user_example', e.target.value)}
                                             className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"
                                         />
                                     </div>
                                     <div className="flex justify-end space-x-2">
                                         <button
                                             type="button"
-                                            onClick={() => setEditingWord(null)}
+                                            onClick={handleCancelEdit}
                                             className="px-4 py-2 text-gray-300 border border-gray-600 rounded-md hover:bg-gray-700"
                                         >
                                             Cancel
@@ -220,7 +296,7 @@ export default function Dashboard() {
                                     word={word}
                                     onEdit={setEditingWord}
                                     onDelete={handleDelete}
-                                    onUpdate={handleWordUpdate}  // Add this prop
+                                    onUpdate={handleWordUpdate}
                                 />
                             )}
                         </div>
