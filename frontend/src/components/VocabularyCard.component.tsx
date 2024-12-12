@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { VocabularyWord } from '../types/vocabulary.type';
 import { vocabulary } from '../services/api.service';
+import HighlightedExample from './HighlightedExample.component';
 
 interface Props {
     word: VocabularyWord;
@@ -47,7 +48,7 @@ export default function VocabularyCard({ word, onEdit, onDelete, onUpdate }: Pro
                     )}
                     {word.ai_example && (
                         <div className="mt-2 bg-blue-500/10 p-3 rounded-lg border border-blue-500/20">
-                            <p className="text-blue-400 italic">AI example: "{word.ai_example}"</p>
+                            <HighlightedExample text={word.ai_example} word={word.word} />
                         </div>
                     )}
                     {error && (
