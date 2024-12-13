@@ -42,9 +42,16 @@ export const vocabulary = {
         const response = await api.delete(`/vocabulary/${id}`);
         return response.data;
     },
+    generateDefinition: async (word: string) => {
+        const response = await api.post<{ definition: string }>(
+            '/vocabulary/generate-definition',
+            { word }
+        );
+        return response.data;
+    },
     generateAiExample: async (id: number, word: string, definition: string) => {
         const response = await api.post<{ aiExample: string }>(
-            `/vocabulary/${id}/generate-example`, 
+            `/vocabulary/${id}/generate-example`,
             { word, definition }
         );
         return response.data;

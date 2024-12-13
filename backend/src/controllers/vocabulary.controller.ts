@@ -24,14 +24,14 @@ export const addWord: RequestHandler = async (req, res, next) => {
     try {
         const { word, definition, user_example, ai_example } = req.body;
 
-        if (!word || !definition) {
-            res.status(400).json({ error: 'Word and definition are required' });
+        if (!word) {
+            res.status(400).json({ error: 'Word is required' });
             return;
         }
 
         const result = await query(
             'INSERT INTO vocabulary (user_id, word, definition, user_example, ai_example) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-            [req.user?.id, word, definition, user_example, ai_example]
+            [req.user?.id, word, definition || null, user_example, ai_example]
         );
         res.status(201).json(result.rows[0]);
     } catch (error) {
@@ -44,8 +44,8 @@ export const updateWord: RequestHandler = async (req, res, next) => {
         const { id } = req.params;
         const { word, definition, user_example, ai_example } = req.body;
 
-        if (!word || !definition) {
-            res.status(400).json({ error: 'Word and definition are required' });
+        if (!word) {
+            res.status(400).json({ error: 'Word is required' });
             return;
         }
 
@@ -58,7 +58,7 @@ export const updateWord: RequestHandler = async (req, res, next) => {
 
         const result = await query(
             'UPDATE vocabulary SET word = $1, definition = $2, user_example = $3, ai_example = $4, updated_at = CURRENT_TIMESTAMP WHERE id = $5 AND user_id = $6 RETURNING *',
-            [word, definition, user_example, finalAiExample, id, req.user?.id]
+            [word, definition || null, user_example, finalAiExample, id, req.user?.id]
         );
 
         if (result.rows.length === 0) {
@@ -86,6 +86,24 @@ export const deleteWord: RequestHandler = async (req, res, next) => {
         }
 
         res.json({ message: 'Word deleted successfully' });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const generateDefinition: RequestHandler = async (req, res, next): Promise<void> => {
+    try {
+        const { word } = req.body;
+
+        if (!word) {
+            res.status(400).json({ error: 'Word is required' });
+            return;
+        }
+
+        const ollama = OllamaService.getInstance();
+        const definition = await ollama.generateDefinition(word);
+
+        res.json({ definition });
     } catch (error) {
         next(error);
     }
