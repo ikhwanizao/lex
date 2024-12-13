@@ -51,18 +51,19 @@ export default function VocabularyCard({ word, onEdit, onDelete, onUpdate }: Pro
     };
 
     return (
-        <div className="bg-gray-800 p-4 rounded-lg shadow-lg border border-gray-700 relative overflow-hidden">
+        <div className="bg-gray-800 p-4 sm:p-6 rounded-lg shadow-lg border border-gray-700 relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 animate-gradient-x" />
 
-            <div className="flex justify-between items-start relative">
-                <div className="flex-grow">
+            <div className="flex flex-col sm:flex-row justify-between gap-4 relative">
+                <div className="flex-grow space-y-3">
                     <h3 className="text-lg font-semibold text-white">{word.word}</h3>
-                    <div className="flex items-center mt-1">
+
+                    <div className="space-y-2">
                         <p className="text-gray-300">{word.definition}</p>
                         <button
                             onClick={handleGenerateDefinition}
                             disabled={isGeneratingDefinition}
-                            className={`ml-2 px-2 py-1 text-xs rounded-md ${isGeneratingDefinition
+                            className={`w-full sm:w-auto px-3 py-2 text-sm rounded-md ${isGeneratingDefinition
                                     ? 'bg-indigo-700/50 opacity-50 cursor-not-allowed'
                                     : 'bg-indigo-600 hover:bg-indigo-500'
                                 } text-white transition-colors`}
@@ -70,34 +71,38 @@ export default function VocabularyCard({ word, onEdit, onDelete, onUpdate }: Pro
                             {isGeneratingDefinition ? 'Generating...' : 'Generate Definition'}
                         </button>
                     </div>
+
                     {word.user_example && (
-                        <p className="text-gray-400 mt-2 italic">Your example: "{word.user_example}"</p>
+                        <p className="text-gray-400 italic">Your example: "{word.user_example}"</p>
                     )}
+
                     {word.ai_example && (
-                        <div className="mt-2 bg-blue-500/10 p-3 rounded-lg border border-blue-500/20">
+                        <div className="bg-blue-500/10 p-3 rounded-lg border border-blue-500/20">
                             <HighlightedExample text={word.ai_example} word={word.word} />
                         </div>
                     )}
+
                     {error && (
-                        <p className="text-red-400 mt-2 text-sm">{error}</p>
+                        <p className="text-red-400 text-sm">{error}</p>
                     )}
                 </div>
 
-                <div className="flex flex-col space-y-2 ml-4">
-                    <div className="flex space-x-2">
+                <div className="flex flex-col gap-2 sm:ml-4 min-w-[140px]">
+                    <div className="flex sm:flex-col gap-2">
                         <button
                             onClick={() => onEdit(word)}
-                            className="flex-1 text-blue-400 hover:text-blue-300 transition-all px-3 py-1.5 rounded-md hover:bg-blue-500/10"
+                            className="flex-1 text-blue-400 hover:text-blue-300 transition-all px-3 py-2 rounded-md hover:bg-blue-500/10 border border-transparent hover:border-blue-500/20"
                         >
                             Edit
                         </button>
                         <button
                             onClick={() => onDelete(word)}
-                            className="flex-1 text-red-400 hover:text-red-300 transition-all px-3 py-1.5 rounded-md hover:bg-red-500/10"
+                            className="flex-1 text-red-400 hover:text-red-300 transition-all px-3 py-2 rounded-md hover:bg-red-500/10 border border-transparent hover:border-red-500/20"
                         >
                             Delete
                         </button>
                     </div>
+
                     <button
                         onClick={handleGenerateExample}
                         disabled={isGenerating}
@@ -107,7 +112,7 @@ export default function VocabularyCard({ word, onEdit, onDelete, onUpdate }: Pro
                             flex items-center justify-center
                             px-4 py-2.5 rounded-lg
                             font-medium text-base
-                            min-w-[160px]
+                            w-full
                             ${isGenerating
                                 ? 'bg-indigo-700/50 opacity-50 cursor-not-allowed'
                                 : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500'

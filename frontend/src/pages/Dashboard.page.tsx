@@ -173,34 +173,41 @@ export default function Dashboard() {
 
                 {/* Add Word Form */}
                 {isAddingWord && (
-                    <form onSubmit={handleAddWord} className="mb-8 p-4 bg-gray-800 rounded-lg shadow-lg border border-gray-700">
+                    <form onSubmit={handleAddWord} className="mb-8 p-4 sm:p-6 bg-gray-800 rounded-lg shadow-lg border border-gray-700">
                         <div className="space-y-4">
+                            {/* Word Input */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-300">
-                                    Word <span className="text-red-500">*</span>
-                                    <span className="text-gray-400 text-xs ml-2">Required</span>
+                                    <span className="flex items-center gap-2">
+                                        Word <span className="text-red-500">*</span>
+                                        <span className="text-gray-400 text-xs">Required</span>
+                                    </span>
                                 </label>
                                 <input
                                     type="text"
                                     value={newWord.word}
                                     onChange={(e) => setNewWord({ ...newWord, word: e.target.value })}
-                                    className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"
                                     required
                                 />
                             </div>
+
+                            {/* Definition Input */}
                             <div>
-                                <div className="flex justify-between items-center">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-1">
                                     <label className="block text-sm font-medium text-gray-300">
-                                        Definition
-                                        <span className="text-gray-400 text-xs ml-2">Optional</span>
+                                        <span className="flex items-center gap-2">
+                                            Definition
+                                            <span className="text-gray-400 text-xs">Optional</span>
+                                        </span>
                                     </label>
                                     <button
                                         type="button"
                                         onClick={handleGenerateDefinition}
                                         disabled={!newWord.word.trim() || isGeneratingDefinition}
-                                        className={`text-sm px-3 py-1 rounded-md transition-colors ${!newWord.word.trim() || isGeneratingDefinition
-                                            ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                                            : 'bg-blue-600 text-white hover:bg-blue-700'
+                                        className={`text-sm px-3 py-1.5 rounded-md transition-colors w-full sm:w-auto ${!newWord.word.trim() || isGeneratingDefinition
+                                                ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                                                : 'bg-blue-600 text-white hover:bg-blue-700'
                                             }`}
                                     >
                                         {isGeneratingDefinition ? 'Generating...' : 'Generate Definition'}
@@ -209,23 +216,29 @@ export default function Dashboard() {
                                 <textarea
                                     value={newWord.definition || ''}
                                     onChange={(e) => setNewWord({ ...newWord, definition: e.target.value })}
-                                    className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"
                                     rows={3}
                                 />
                             </div>
+
+                            {/* Example Input */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-300">
-                                    Example
-                                    <span className="text-gray-400 text-xs ml-2">Optional</span>
+                                    <span className="flex items-center gap-2">
+                                        Example
+                                        <span className="text-gray-400 text-xs">Optional</span>
+                                    </span>
                                 </label>
                                 <textarea
                                     value={newWord.user_example || ''}
                                     onChange={(e) => setNewWord({ ...newWord, user_example: e.target.value })}
-                                    className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"
                                     rows={2}
                                 />
                             </div>
-                            <div className="flex justify-end space-x-2">
+
+                            {/* Form Buttons */}
+                            <div className="flex flex-col sm:flex-row justify-end gap-2">
                                 <button
                                     type="button"
                                     onClick={() => {
@@ -233,14 +246,14 @@ export default function Dashboard() {
                                         setNewWord({ word: '', definition: '', user_example: '' });
                                         setError(null);
                                     }}
-                                    className="px-4 py-2 text-gray-300 border border-gray-600 rounded-md hover:bg-gray-700 transition-colors"
+                                    className="w-full sm:w-auto px-4 py-2 text-gray-300 border border-gray-600 rounded-md hover:bg-gray-700"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={!newWord.word.trim()}
-                                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:bg-blue-600/50 disabled:cursor-not-allowed"
+                                    className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-600/50 disabled:cursor-not-allowed"
                                 >
                                     Save
                                 </button>
