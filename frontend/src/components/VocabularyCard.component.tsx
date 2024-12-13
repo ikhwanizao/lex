@@ -62,11 +62,10 @@ export default function VocabularyCard({ word, onEdit, onDelete, onUpdate }: Pro
                         <button
                             onClick={handleGenerateDefinition}
                             disabled={isGeneratingDefinition}
-                            className={`ml-2 px-2 py-1 text-xs rounded-md ${
-                                isGeneratingDefinition
+                            className={`ml-2 px-2 py-1 text-xs rounded-md ${isGeneratingDefinition
                                     ? 'bg-indigo-700/50 opacity-50 cursor-not-allowed'
                                     : 'bg-indigo-600 hover:bg-indigo-500'
-                            } text-white transition-colors`}
+                                } text-white transition-colors`}
                         >
                             {isGeneratingDefinition ? 'Generating...' : 'Generate Definition'}
                         </button>
@@ -83,9 +82,22 @@ export default function VocabularyCard({ word, onEdit, onDelete, onUpdate }: Pro
                         <p className="text-red-400 mt-2 text-sm">{error}</p>
                     )}
                 </div>
-                
-                {/* Rest of the buttons remain the same */}
+
                 <div className="flex flex-col space-y-2 ml-4">
+                    <div className="flex space-x-2">
+                        <button
+                            onClick={() => onEdit(word)}
+                            className="flex-1 text-blue-400 hover:text-blue-300 transition-all px-3 py-1.5 rounded-md hover:bg-blue-500/10"
+                        >
+                            Edit
+                        </button>
+                        <button
+                            onClick={() => onDelete(word)}
+                            className="flex-1 text-red-400 hover:text-red-300 transition-all px-3 py-1.5 rounded-md hover:bg-red-500/10"
+                        >
+                            Delete
+                        </button>
+                    </div>
                     <button
                         onClick={handleGenerateExample}
                         disabled={isGenerating}
@@ -109,20 +121,6 @@ export default function VocabularyCard({ word, onEdit, onDelete, onUpdate }: Pro
                     >
                         {isGenerating ? 'Generating...' : 'Generate Example'}
                     </button>
-                    <div className="flex space-x-2">
-                        <button
-                            onClick={() => onEdit(word)}
-                            className="flex-1 text-blue-400 hover:text-blue-300 transition-all px-3 py-1.5 rounded-md hover:bg-blue-500/10"
-                        >
-                            Edit
-                        </button>
-                        <button
-                            onClick={() => onDelete(word)}
-                            className="flex-1 text-red-400 hover:text-red-300 transition-all px-3 py-1.5 rounded-md hover:bg-red-500/10"
-                        >
-                            Delete
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>
