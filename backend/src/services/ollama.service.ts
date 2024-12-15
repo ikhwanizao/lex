@@ -26,7 +26,7 @@ export class OllamaService {
     async generateExample(word: string, definition: string): Promise<string> {
         try {
             const response = await axios.post<OllamaResponse>(`${OLLAMA_API}/generate`, {
-                model: "llama3.2:3b",
+                model: "llama3.2:1b",
                 prompt: `Given the word "${word}" which means "${definition}", generate one natural example sentence that MUST use the exact word "${word}". The sentence should demonstrate proper usage and help understand the meaning. Provide only the example sentence without any quotation marks, nothing else.`,
                 stream: false
             });
