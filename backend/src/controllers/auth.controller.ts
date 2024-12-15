@@ -1,8 +1,8 @@
 import { RequestHandler } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { query } from '../config/database.config.ts';
-import { DbUser } from '../types/database.types.ts';
+import { query } from '../config/database.config.js';
+import { DbUser } from '../types/database.types.js';
 
 export const register: RequestHandler = async (req, res, next): Promise<void> => {
   try {

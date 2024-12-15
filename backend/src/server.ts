@@ -1,10 +1,10 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
-import { getAdminAdapter } from './config/database.config.ts'
-import { initAdmin } from './config/admin.config.ts'
-import authRoutes from './routes/auth.route.ts'
-import vocabularyRoutes from './routes/vocabulary.route.ts'
+import { getAdminAdapter } from './config/database.config.js'
+import { initAdmin } from './config/admin.config.js'
+import authRoutes from './routes/auth.route.js'
+import vocabularyRoutes from './routes/vocabulary.route.js'
 
 dotenv.config()
 

@@ -1,12 +1,12 @@
 import express from 'express';
-import { authenticateToken } from '../middleware/auth.middleware.ts';
+import { authenticateToken } from '../middleware/auth.middleware.js';
 import { 
     getWords, 
     addWord, 
     updateWord, 
     deleteWord 
-} from '../controllers/vocabulary.controller.ts';
-import * as vocabularyController from '../controllers/vocabulary.controller.ts';
+} from '../controllers/vocabulary.controller.js';
+import * as vocabularyController from '../controllers/vocabulary.controller.js';
 
 const router = express.Router();
 
