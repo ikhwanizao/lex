@@ -14,11 +14,13 @@ const start = async () => {
     const db = await getAdminAdapter()
     const { admin, router } = initAdmin(db)
 
+    const corsOrigins = process.env.CORS_ORIGIN?.split(',') || []
+
     app.use(admin.options.rootPath, router)
     app.use(cors({
-        origin: ['http://13.212.250.63', 'http://localhost:5173'],
-        credentials: true
-    }));
+        origin: corsOrigins,
+        credentials: true,
+    }))
     app.use(express.json())
     app.use(express.urlencoded({ extended: true }))
 
