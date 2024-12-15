@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { query } from '../config/database.config.ts';
-import { OllamaService } from '../services/ollama.service.ts';
+import { query } from '../config/database.config.js';
+import { OllamaService } from '../services/ollama.service.js';
 
 type RequestHandler = (
     req: Request,
