@@ -47,7 +47,7 @@ export class OllamaService {
     async generateDefinition(word: string): Promise<string> {
         try {
             const response = await axios.post<OllamaResponse>(`${OLLAMA_API}/generate`, {
-                model: "llama3.2:3b",
+                model: "llama3.2:1b",
                 prompt: `Define the word "${word}" in a clear and concise way. Provide only the definition without any quotation marks or additional context, nothing else.`,
                 stream: false
             });
