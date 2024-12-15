@@ -3,7 +3,7 @@ import { AuthResponse } from '../types/auth.type';
 import { VocabularyWord, CreateWordData, UpdateWordData } from '../types/vocabulary.type';
 
 const api = axios.create({
-    baseURL: 'http://localhost:5000/api'
+    baseURL: '/api'
 });
 
 api.interceptors.request.use((config) => {
