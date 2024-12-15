@@ -1,6 +1,7 @@
 export interface JwtUser {
-  id: number;
-  email: string;
+    id: number;
+    email: string;
+    username: string;
 }
 
 export interface RegisterBody {

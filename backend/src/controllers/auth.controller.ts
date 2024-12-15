@@ -23,7 +23,8 @@ export const register: RequestHandler = async (req, res, next): Promise<void> =>
     const user = result.rows[0];
     const userForToken = {
       id: user.id,
-      email: user.email
+      email: user.email,
+      username: user.username
     };
 
     const token = jwt.sign(userForToken, process.env.JWT_SECRET!);
