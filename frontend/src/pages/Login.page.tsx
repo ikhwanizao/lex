@@ -78,6 +78,14 @@ export default function Login() {
                     >
                         Sign in
                     </button>
+                    <div className="text-center mt-4">
+                        <Link
+                            to="/request-password-reset"
+                            className="text-blue-400 hover:text-blue-300 transition-colors"
+                        >
+                            Forgot Password?
+                        </Link>
+                    </div>
                 </form>
             </div>
         </div>
