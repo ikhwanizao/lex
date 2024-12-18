@@ -3,6 +3,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Login from './pages/Login.page';
 import Register from './pages/Register.page';
 import Dashboard from './pages/Dashboard.page';
+import RequestPasswordReset from './pages/RequestPasswordReset.page';
+import ResetPassword from './pages/ResetPassword.page';
 import Layout from './components/Layout.component';
 import ProtectedRoute from './components/ProtectedRoute.component';
 
@@ -15,6 +17,8 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/request-password-reset" element={<RequestPasswordReset />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
             <Route index element={<Navigate to="/dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
