@@ -3,7 +3,7 @@ import { AuthResponse } from '../types/auth.type';
 import { VocabularyWord, CreateWordData, UpdateWordData } from '../types/vocabulary.type';
 
 const api = axios.create({
-    baseURL: '/api'
+    baseURL: import.meta.env.VITE_API_URL
 });
 
 api.interceptors.request.use((config) => {
@@ -21,6 +21,17 @@ export const auth = {
     },
     register: async (email: string, username: string, password: string) => {
         const response = await api.post<AuthResponse>('/auth/register', { email, password, username });
+        return response.data;
+    },
+    requestPasswordReset: async (email: string) => {
+        const response = await api.post<{ message: string }>('/auth/request-password-reset', { email });
+        return response.data;
+    },
+    resetPassword: async (token: string, newPassword: string) => {
+        const response = await api.post<{ message: string }>('/auth/reset-password', { 
+            token, 
+            newPassword 
+        });
         return response.data;
     }
 };
