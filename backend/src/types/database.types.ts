@@ -8,6 +8,8 @@ interface TimeStamps {
     email: string;
     username: string;
     password_hash: string;
+    reset_token_hash?: string;
+    reset_token_expires?: Date;
   }
   
   export interface DbVocabulary extends TimeStamps {
