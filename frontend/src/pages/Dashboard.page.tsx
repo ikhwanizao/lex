@@ -4,6 +4,7 @@ import { VocabularyWord, CreateWordData, UpdateWordData } from '../types/vocabul
 import { useState } from 'react';
 import VocabularyCard from '../components/VocabularyCard.component';
 import LoadingSpinner from '../components/LoadingSpinner.component';
+import { FormLabel } from '../components/FormLabel.component';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -177,12 +178,7 @@ export default function Dashboard() {
                         <div className="space-y-4">
                             {/* Word Input */}
                             <div>
-                                <label className="block text-sm font-medium text-gray-300">
-                                    <span className="flex items-center gap-2">
-                                        Word <span className="text-red-500">*</span>
-                                        <span className="text-gray-400 text-xs">Required</span>
-                                    </span>
-                                </label>
+                                <FormLabel label="Word" required />
                                 <input
                                     type="text"
                                     value={newWord.word}
@@ -195,19 +191,14 @@ export default function Dashboard() {
                             {/* Definition Input */}
                             <div>
                                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-1">
-                                    <label className="block text-sm font-medium text-gray-300">
-                                        <span className="flex items-center gap-2">
-                                            Definition
-                                            <span className="text-gray-400 text-xs">Optional</span>
-                                        </span>
-                                    </label>
+                                    <FormLabel label="Definition" required />
                                     <button
                                         type="button"
                                         onClick={handleGenerateDefinition}
                                         disabled={!newWord.word.trim() || isGeneratingDefinition}
                                         className={`text-sm px-3 py-1.5 rounded-md transition-colors w-full sm:w-auto ${!newWord.word.trim() || isGeneratingDefinition
-                                                ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                                                : 'bg-blue-600 text-white hover:bg-blue-700'
+                                            ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                                            : 'bg-blue-600 text-white hover:bg-blue-700'
                                             }`}
                                     >
                                         {isGeneratingDefinition ? 'Generating...' : 'Generate Definition'}
@@ -223,12 +214,7 @@ export default function Dashboard() {
 
                             {/* Example Input */}
                             <div>
-                                <label className="block text-sm font-medium text-gray-300">
-                                    <span className="flex items-center gap-2">
-                                        Example
-                                        <span className="text-gray-400 text-xs">Optional</span>
-                                    </span>
-                                </label>
+                                <FormLabel label="Example" optional />
                                 <textarea
                                     value={newWord.user_example || ''}
                                     onChange={(e) => setNewWord({ ...newWord, user_example: e.target.value })}
@@ -316,10 +302,7 @@ export default function Dashboard() {
                                 <div className="bg-gray-800 p-4 rounded-lg shadow-lg border border-gray-700">
                                     <form onSubmit={handleEditWord} className="space-y-4">
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300">
-                                                Word <span className="text-red-500">*</span>
-                                                <span className="text-gray-400 text-xs ml-2">Required</span>
-                                            </label>
+                                            <FormLabel label="Word" required />
                                             <input
                                                 type="text"
                                                 value={editingWord.word}
@@ -329,10 +312,7 @@ export default function Dashboard() {
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300">
-                                                Definition
-                                                <span className="text-gray-400 text-xs ml-2">Optional</span>
-                                            </label>
+                                            <FormLabel label="Definition" required />
                                             <textarea
                                                 value={editingWord.definition || ''}
                                                 onChange={(e) => handleInputChange('definition', e.target.value)}
@@ -341,10 +321,7 @@ export default function Dashboard() {
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300">
-                                                Example
-                                                <span className="text-gray-400 text-xs ml-2">Optional</span>
-                                            </label>
+                                            <FormLabel label="Example" optional />
                                             <textarea
                                                 value={editingWord.user_example || ''}
                                                 onChange={(e) => handleInputChange('user_example', e.target.value)}
