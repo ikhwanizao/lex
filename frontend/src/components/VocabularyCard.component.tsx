@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { VocabularyWord } from '../types/vocabulary.type';
 import { vocabulary } from '../services/api.service';
 import HighlightedExample from './HighlightedExample.component';
+import DefinitionDisplay from './DefinitionDisplay.component';
 
 interface Props {
     word: VocabularyWord;
@@ -39,11 +40,11 @@ export default function VocabularyCard({ word, onEdit, onDelete, onUpdate }: Pro
         try {
             setIsGeneratingDefinition(true);
             setError('');
-    
+
             const { definition } = await vocabulary.generateDefinition(word.word);
             const updatedWord = await vocabulary.updateDefinition(word.id, definition);
-            
-            onUpdate(updatedWord); 
+
+            onUpdate(updatedWord);
         } catch (err) {
             console.error('Definition generation error:', err);
             setError('Failed to generate AI definition');
@@ -61,7 +62,7 @@ export default function VocabularyCard({ word, onEdit, onDelete, onUpdate }: Pro
                     <h3 className="text-lg font-semibold text-white">{word.word}</h3>
 
                     <div className="space-y-2">
-                        <p className="text-gray-300">{word.definition}</p>
+                        <DefinitionDisplay definition={word.definition} />
                         <button
                             onClick={handleGenerateDefinition}
                             disabled={isGeneratingDefinition}
