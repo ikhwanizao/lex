@@ -39,12 +39,14 @@ export default function VocabularyCard({ word, onEdit, onDelete, onUpdate }: Pro
         try {
             setIsGeneratingDefinition(true);
             setError('');
-
+    
             const { definition } = await vocabulary.generateDefinition(word.word);
-            onUpdate({ ...word, definition });
+            const updatedWord = await vocabulary.updateDefinition(word.id, definition);
+            
+            onUpdate(updatedWord); 
         } catch (err) {
-            setError('Failed to generate AI definition');
             console.error('Definition generation error:', err);
+            setError('Failed to generate AI definition');
         } finally {
             setIsGeneratingDefinition(false);
         }

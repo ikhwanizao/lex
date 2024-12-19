@@ -109,6 +109,27 @@ export const generateDefinition: RequestHandler = async (req, res, next): Promis
     }
 };
 
+export const updateDefinition: RequestHandler = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { definition } = req.body;
+
+        const result = await query(
+            'UPDATE vocabulary SET definition = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 AND user_id = $3 RETURNING *',
+            [definition, id, req.user?.id]
+        );
+
+        if (result.rows.length === 0) {
+            res.status(404).json({ error: 'Word not found or unauthorized' });
+            return;
+        }
+
+        res.json(result.rows[0]);
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const generateAiExample: RequestHandler = async (req, res, next): Promise<void> => {
     try {
         const { id } = req.params;

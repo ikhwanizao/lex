@@ -18,6 +18,7 @@ router.put('/:id', updateWord);
 router.delete('/:id', deleteWord);
 
 router.post('/generate-definition', vocabularyController.generateDefinition);
+router.put('/:id/definition', vocabularyController.updateDefinition);
 router.post('/:id/generate-example', vocabularyController.generateAiExample);
 
 export default router;

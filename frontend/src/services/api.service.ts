@@ -60,6 +60,13 @@ export const vocabulary = {
         );
         return response.data;
     },
+    updateDefinition: async (id: number, definition: string) => {
+        const response = await api.put<VocabularyWord>(
+            `/vocabulary/${id}/definition`,
+            { definition }
+        );
+        return response.data;
+    },
     generateAiExample: async (id: number, word: string, definition: string) => {
         const response = await api.post<{ aiExample: string }>(
             `/vocabulary/${id}/generate-example`,
