@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { query } from '../config/database.config.js';
+import { prisma } from '../lib/prisma.js';
 import { OllamaService } from '../services/ollama.service.js';
 
 type RequestHandler = (
@@ -10,11 +10,15 @@ type RequestHandler = (
 
 export const getWords: RequestHandler = async (req, res, next) => {
     try {
-        const result = await query(
-            'SELECT * FROM vocabulary WHERE user_id = $1 ORDER BY created_at DESC',
-            [req.user?.id]
-        );
-        res.json(result.rows);
+        const words = await prisma.vocabulary.findMany({
+            where: {
+                user_id: req.user?.id
+            },
+            orderBy: {
+                created_at: 'desc'
+            }
+        });
+        res.json(words);
     } catch (error) {
         next(error);
     }
@@ -29,11 +33,19 @@ export const addWord: RequestHandler = async (req, res, next) => {
             return;
         }
 
-        const result = await query(
-            'INSERT INTO vocabulary (user_id, word, definition, user_example, ai_example) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-            [req.user?.id, word, definition || null, user_example, ai_example]
-        );
-        res.status(201).json(result.rows[0]);
+        const newWord = await prisma.vocabulary.create({
+            data: {
+                word,
+                definition: definition || '',
+                user_example: user_example || null,
+                ai_example: ai_example || null,
+                users: {
+                    connect: { id: req.user?.id }
+                }
+            }
+        });
+
+        res.status(201).json(newWord);
     } catch (error) {
         next(error);
     }
@@ -49,24 +61,32 @@ export const updateWord: RequestHandler = async (req, res, next) => {
             return;
         }
 
-        const existingWord = await query(
-            'SELECT ai_example FROM vocabulary WHERE id = $1 AND user_id = $2',
-            [id, req.user?.id]
-        );
+        const updatedWord = await prisma.vocabulary.updateMany({
+            where: {
+                id: parseInt(id),
+                user_id: req.user?.id
+            },
+            data: {
+                word,
+                definition: definition || '',
+                user_example: user_example || null,
+                ai_example: ai_example || null
+            }
+        });
 
-        const finalAiExample = ai_example !== undefined ? ai_example : existingWord.rows[0]?.ai_example;
-
-        const result = await query(
-            'UPDATE vocabulary SET word = $1, definition = $2, user_example = $3, ai_example = $4, updated_at = CURRENT_TIMESTAMP WHERE id = $5 AND user_id = $6 RETURNING *',
-            [word, definition || null, user_example, finalAiExample, id, req.user?.id]
-        );
-
-        if (result.rows.length === 0) {
+        if (!updatedWord.count) {
             res.status(404).json({ error: 'Word not found or unauthorized' });
             return;
         }
 
-        res.json(result.rows[0]);
+        const word_data = await prisma.vocabulary.findFirst({
+            where: {
+                id: parseInt(id),
+                user_id: req.user?.id
+            }
+        });
+
+        res.json(word_data);
     } catch (error) {
         next(error);
     }
@@ -75,12 +95,14 @@ export const updateWord: RequestHandler = async (req, res, next) => {
 export const deleteWord: RequestHandler = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const result = await query(
-            'DELETE FROM vocabulary WHERE id = $1 AND user_id = $2 RETURNING *',
-            [id, req.user?.id]
-        );
+        const deletedWord = await prisma.vocabulary.deleteMany({
+            where: {
+                id: parseInt(id),
+                user_id: req.user?.id
+            }
+        });
 
-        if (result.rows.length === 0) {
+        if (!deletedWord.count) {
             res.status(404).json({ error: 'Word not found or unauthorized' });
             return;
         }
@@ -114,17 +136,34 @@ export const updateDefinition: RequestHandler = async (req, res, next) => {
         const { id } = req.params;
         const { definition } = req.body;
 
-        const result = await query(
-            'UPDATE vocabulary SET definition = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 AND user_id = $3 RETURNING *',
-            [definition, id, req.user?.id]
-        );
+        if (!definition) {
+            res.status(400).json({ error: 'Definition is required' });
+            return;
+        }
 
-        if (result.rows.length === 0) {
+        const updatedWord = await prisma.vocabulary.updateMany({
+            where: {
+                id: parseInt(id),
+                user_id: req.user?.id
+            },
+            data: {
+                definition
+            }
+        });
+
+        if (!updatedWord.count) {
             res.status(404).json({ error: 'Word not found or unauthorized' });
             return;
         }
 
-        res.json(result.rows[0]);
+        const word_data = await prisma.vocabulary.findFirst({
+            where: {
+                id: parseInt(id),
+                user_id: req.user?.id
+            }
+        });
+
+        res.json(word_data);
     } catch (error) {
         next(error);
     }
@@ -143,12 +182,17 @@ export const generateAiExample: RequestHandler = async (req, res, next): Promise
         const ollama = OllamaService.getInstance();
         const aiExample = await ollama.generateExample(word, definition);
 
-        const result = await query(
-            'UPDATE vocabulary SET ai_example = $1 WHERE id = $2 AND user_id = $3 RETURNING *',
-            [aiExample, id, req.user?.id]
-        );
+        const updatedWord = await prisma.vocabulary.updateMany({
+            where: {
+                id: parseInt(id),
+                user_id: req.user?.id
+            },
+            data: {
+                ai_example: aiExample
+            }
+        });
 
-        if (result.rowCount === 0) {
+        if (!updatedWord.count) {
             res.status(404).json({ error: 'Word not found' });
             return;
         }
